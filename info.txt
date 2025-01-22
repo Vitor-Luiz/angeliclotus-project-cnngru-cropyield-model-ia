@@ -1,0 +1,40 @@
+Climatematch Project
+
+1) Variables:
+
+a) India's Region: 
+-> spi (maybe)
+-> total precipitation (through pr)
+-> temperature (tas)
+-> soil moisture (mrsos)
+-> relative humidity (hurs)
+-> rice yield (output)
+
+b) Remote Ocean Variables
+-> sst in Indian Dipole (tos)
+-> sst in ENSO region (tos)
+
+- Crop Models -
+AgMIP models: EPIC-Boku, LPJ-GUESS, LPJmL, PEPIC
+folders: gswp3 ou pgfv2
+data: 1901 - 2012 or 1901 - 2010
+
+- Climate Models -
+CMIP models: NorESM-MM, MIROC6
+experiments: historical, ssp245, ssp585, (ssp370)
+variables: tas, hurs, pr, tos, mrsos
+time_resolution: Amon, Omon, day
+
+Shapefiles:
+-> India:
+- lat: 5, 40
+- lon: 65, 98
+
+-> Crop Regions of India
+
+-> Dipole Region - Dipole Mode Index
+__difference between west and east indian ocean SST__
+- Western IOD: 50°E to 70°E and 10°S to 10°N
+- Eastern IOD: 90°E to 110°E and 10°S to 0°S
+
+-> ENSO (Niño 3.4) region: 5°N–5°S, 120°W–170°W
