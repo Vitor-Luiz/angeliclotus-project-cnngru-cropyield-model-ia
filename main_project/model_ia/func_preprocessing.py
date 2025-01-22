@@ -20,20 +20,20 @@ def read_cmip6_spacialized(path):
 
     return ds
 
-def read_cmip6_ocean_index(path_dmi, path_enso):
+def read_cmip6_ocean_index(path_dmi, path_enso, model_name):
     # DMI
     df_dmi = pd.read_csv(path_dmi)
     df_dmi["time"] = pd.to_datetime(df_dmi["time"])
     df_dmi = df_dmi.drop(columns=["dcpp_init_year"])
     df_dmi.set_index("time", inplace=True)
-    df_dmi.rename(columns={"tos_mean": "miroc6_dmi"}, inplace=True)
+    df_dmi.rename(columns={"tos_mean": f"{model_name}_dmi"}, inplace=True)
     df_dmi = df_dmi.loc["1901-01-01":"2012-01-01"]
     # ENSO 3.4
     df_enso = pd.read_csv(path_enso)
     df_enso["time"] = pd.to_datetime(df_enso["time"])
     df_enso = df_enso.drop(columns=["dcpp_init_year"])
     df_enso.set_index("time", inplace=True)
-    df_enso.rename(columns={"tos_mean": "miroc6_enso34"}, inplace=True)
+    df_enso.rename(columns={"tos_mean": f"{model_name}_enso34"}, inplace=True)
 
     return df_dmi, df_enso
 
@@ -49,20 +49,21 @@ def read_crop_yield(path):
     return ds
 
 def interpolation_ds(ds_ref, ds_interp):
-    ds_ref = ds_ref.interp(coords={"lon": ds_interp.lon.values, 
-                                   "lat": ds_interp.lat.values},
-                                   method="linear")
+    ds_interp = ds_interp.interp(coords={"lon": ds_ref.lon.values, 
+                                         "lat": ds_ref.lat.values},
+                                         method="linear")
     
-    if "yield_ric" in ds_ref:
-        ds_ref["yield_ric"] = ds_ref["yield_ric"].fillna(-4)
-    if "mrsos_mean" in ds_ref:
-        ds_ref["mrsos_mean"] = ds_ref["mrsos_mean"].fillna(-40)
+    if "yield_ric" in ds_interp:
+        ds_interp["yield_ric"] = ds_interp["yield_ric"].fillna(-4)
+    if "mrsos_mean" in ds_interp:
+        ds_interp["mrsos_mean"] = ds_interp["mrsos_mean"].fillna(-40)
 
-    print(ds_ref.dims)
+    print(ds_interp.dims)
 
-    return ds_ref
+    return ds_interp
 
 def ocn_model_mean(df_list):
+    
     df = pd.concat(df_list, axis=1)
     df_cnn = df
     df_cnn["dmi"] = (df["miroc6_dmi"] + df["noresm_dmi"]) / 2

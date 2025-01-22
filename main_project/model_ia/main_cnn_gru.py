@@ -32,9 +32,11 @@ list_atm_lnd = [r"C:\Users\Usuario\Documents\Python Scripts\angelic_lothus\cmip6
 ### Ocean Variables - Dipole Mode Index + ENSO 3.4
 list_ocn = [
             [r"C:\Users\Usuario\Documents\Python Scripts\angelic_lothus\cmip6_data_ocean\miroc6_dmi.historical.csv",
-            r"C:\Users\Usuario\Documents\Python Scripts\angelic_lothus\cmip6_data_ocean\miroc6_nino34_anomalies.historical.csv"],
+            r"C:\Users\Usuario\Documents\Python Scripts\angelic_lothus\cmip6_data_ocean\miroc6_nino34_anomalies.historical.csv",
+            "miroc6"],
             [r"C:\Users\Usuario\Documents\Python Scripts\angelic_lothus\cmip6_data_ocean\noresm_dmi.historical.csv",
-            r"C:\Users\Usuario\Documents\Python Scripts\angelic_lothus\cmip6_data_ocean\noresm_nino34_anomalies.historical.csv"]
+            r"C:\Users\Usuario\Documents\Python Scripts\angelic_lothus\cmip6_data_ocean\noresm_nino34_anomalies.historical.csv",
+            "noresm"]
             ]
 
 ### Crop Yield variables - output
@@ -46,7 +48,7 @@ list_cyr = [r"C:\Users\Usuario\Documents\Python Scripts\angelic_lothus\agMIP_ric
 # Open Files
 ds_atm_lnd = [fpp.read_cmip6_spacialized(path_atm_lnd) for path_atm_lnd in list_atm_lnd]
 
-df_ocn = [fpp.read_cmip6_ocean_index(path_ocn[0], path_ocn[1]) for path_ocn in list_ocn]
+df_ocn = [list(fpp.read_cmip6_ocean_index(path_ocn[0], path_ocn[1], path_ocn[2])) for path_ocn in list_ocn]
 
 ds_cyr = [fpp.read_crop_yield(path_cyr) for path_cyr in list_cyr]
 
@@ -72,7 +74,9 @@ ds_cnn = ds_cnn.drop_vars(["member_id", "height", "dcpp_init_year", "depth"])
 print(ds_cnn.yield_rice.max())
 print(ds_cnn.yield_rice.min())
 
+df_ocn = [item for sublist in df_ocn for item in sublist]
 df_cnn = fpp.ocn_model_mean(df_ocn)
+print(df_cnn)
 
 #Convolutional Neural Network (CNN + GRU)
 ## Arrays
@@ -235,3 +239,4 @@ dif_mean = y_test_da.mean(dim="time") - predictions_da.mean(dim="time")
 dif_mean.plot()
 
 plt.show()
+
