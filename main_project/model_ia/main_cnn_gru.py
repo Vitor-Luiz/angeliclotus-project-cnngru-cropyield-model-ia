@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 # Local Imports
 import func_preprocessing as fpp
 import func_model as fm
+import func_analysis as fa
 
 # Preprocessing Data
 ### Path Spacial Input Variabels
@@ -208,6 +209,10 @@ print("Shape of predictions", predictions.shape)  # Have to be (n_samples, 23, 2
 print(y_test.shape)
 print(predictions.shape)
 
+# R2 score
+r2 = r2_score(y_test.flatten(), predictions.flatten())
+print(f"R2 Score: {r2}")
+
 y_test_denorm = fm.denormalize(y_test, yr)
 
 predictions_denorm = fm.denormalize(predictions, yr)
@@ -231,12 +236,23 @@ predictions_da = xr.DataArray(
     coords={"time": time, "lat": lat, "lon": lon}
 )
 
+# Fixing the shape of 'y_test' and 'predictions' to (time, lat, lon)
+lat_correct = ds_cnn['lat']
+lon_correct = ds_cnn['lon']
+y_test_da = y_test_da.assign_coords(lat=lat_correct, lon=lon_correct)
+predictions_da = predictions_da.assign_coords(lat=lat_correct, lon=lon_correct)
+
 # Testing the difference between the mean of y_test_da and predictions_da
+
+print(predictions_da)
+
 dif_mean = y_test_da.mean(dim="time") - predictions_da.mean(dim="time")
 
+dif_percent_mean = ((y_test_da.mean(dim="time") - predictions_da.mean(dim="time")) / np.abs(y_test_da.mean(dim="time"))) * 100
 
-# Plote o resultado
-dif_mean.plot()
+# Plot the results
+#dif_percent_mean.plot(vmin = -20, vmax = 20, cmap = "coolwarm")
 
-plt.show()
+#plt.show()
 
+fa.plot_maps(y_test_da.mean(dim="time"), predictions_da.mean(dim="time"), dif_percent_mean)
